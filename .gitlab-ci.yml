@@ -57,8 +57,12 @@ terraform-deploy:
         -backend-config="key=${TFSTATE_KEY}" 
         -backend-config="region=${TFSTATE_REGION}"
     
-    # Apply Terraform configuration
-    - terraform apply --auto-approve
+    # Generate deployment timestamp to force Terraform updates
+    - export DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    - echo "📅 Deployment Timestamp:" $DEPLOYMENT_TIMESTAMP
+    
+    # Apply Terraform configuration with deployment timestamp
+    - terraform apply --auto-approve -var="deployment_timestamp=${DEPLOYMENT_TIMESTAMP}"
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_PIPELINE_SOURCE == "web"

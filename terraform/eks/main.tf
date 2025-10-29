@@ -1,8 +1,26 @@
+locals {
+  deployment_timestamp = var.deployment_timestamp
+  
+  common_tags = {
+    DeploymentTimestamp = local.deployment_timestamp
+    ManagedBy          = "Terraform"
+    Environment        = "demo"
+  }
+}
+
+variable "deployment_timestamp" {
+  description = "Timestamp of deployment to force Terraform updates"
+  type        = string
+  default     = "2024-01-01T00:00:00Z"
+}
+
 resource "aws_kinesis_stream" "apm_test_stream" {
   #checkov:skip=CKV_AWS_43:demo only, not encryption is needed
   #checkov:skip=CKV_AWS_185:demo only, not encryption is needed
   name             = "apm_test2-gitlab"
   shard_count      = 2
+  
+  tags = local.common_tags
 }
 
 resource "aws_sqs_queue" "apm_test_queue_" {
@@ -12,6 +30,8 @@ resource "aws_sqs_queue" "apm_test_queue_" {
   max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 19
+  
+  tags = local.common_tags
 }
 
 resource "aws_dynamodb_table" "test_2_table" {
@@ -36,7 +56,8 @@ resource "aws_dynamodb_table" "test_2_table" {
     name = "id"
     type = "S"
   }
-
+  
+  tags = local.common_tags
 }
 
 

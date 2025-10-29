@@ -1,0 +1,64 @@
+# GitLab CI/CD Pipeline for Terraform EKS Deployment
+# Migrated from GitHub Actions to GitLab CI/CD
+
+variables:
+  AWS_REGION: us-west-2
+  TFSTATE_KEY: application-signals/demo-applications-gitlab
+  TFSTATE_BUCKET: tfstate-csdelivery-test-bucket
+  TFSTATE_REGION: us-west-2
+  TF_VAR_cluster_name: petclinic-demo-gitlab
+  TF_VAR_cloudwatch_observability_addon_version: v3.6.0-eksbuild.2
+  AWS_ROLE_ARN: arn:aws:iam::544546520146:role/gitlab-oidc-role
+  AWS_DEFAULT_REGION: $AWS_REGION
+
+  # Enable timestamps in job logs (ISO 8601 format)
+  FF_TIMESTAMPS: "true"
+
+# Control when the pipeline runs
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "web"  # Allow manual triggering
+
+stages:
+  - deploy
+
+terraform-deploy:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:latest
+    entrypoint: [""]  # Override default terraform entrypoint to run shell commands
+  resource_group: terraform-deployment  # Prevent concurrent deployments
+  # Generate OIDC ID token for AWS authentication
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    # Install required dependencies
+    - apk add --no-cache python3 py3-pip curl aws-cli
+    
+    # Configure AWS credentials using OIDC ID token
+    - |
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+      $(aws sts assume-role-with-web-identity \
+      --role-arn ${AWS_ROLE_ARN} \
+      --role-session-name "gitlab-${CI_PROJECT_NAME}-${CI_PIPELINE_ID}" \
+      --web-identity-token ${GITLAB_OIDC_TOKEN} \
+      --duration-seconds 3600 \
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' \
+      --output text))
+    
+    # Verify AWS credentials
+    - aws sts get-caller-identity
+  script:
+    # Initialize Terraform with backend configuration
+    - cd terraform/eks
+    - terraform init -backend-config="bucket=${TFSTATE_BUCKET}" 
+        -backend-config="key=${TFSTATE_KEY}" 
+        -backend-config="region=${TFSTATE_REGION}"
+    
+    # Apply Terraform configuration
+    - terraform apply --auto-approve
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "web"

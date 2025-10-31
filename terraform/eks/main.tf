@@ -14,18 +14,18 @@ variable "deployment_timestamp" {
   default     = "2024-01-01T00:00:00Z"
 }
 
-resource "aws_kinesis_stream" "apm_test_stream-gitlab" {
+resource "aws_kinesis_stream" "apm_test_stream-github" {
   #checkov:skip=CKV_AWS_43:demo only, not encryption is needed
   #checkov:skip=CKV_AWS_185:demo only, not encryption is needed
-  name             = "apm_test2-github-gitlab"
+  name             = "apm_test2-github"
   shard_count      = 2
   
   tags = local.common_tags
 }
 
-resource "aws_sqs_queue" "apm_test_queue_-gitlab" {
+resource "aws_sqs_queue" "apm_test_queue_-github" {
   #checkov:skip=CKV_AWS_27:demo only, not encryption is needed
-  name                      = "apm_test2_github-gitlab"
+  name                      = "apm_test2_-github"
   delay_seconds             = 100
   max_message_size          = 2048
   message_retention_seconds = 86400
@@ -34,11 +34,11 @@ resource "aws_sqs_queue" "apm_test_queue_-gitlab" {
   tags = local.common_tags
 }
 
-resource "aws_dynamodb_table" "test_2_table-gitlab" {
+resource "aws_dynamodb_table" "test_2_table-github" {
   #checkov:skip=CKV2_AWS_16:demo only, autoscaling is not needed
   #checkov:skip=CKV_AWS_119:demo only, no encryption is needed
 
-  name           = "test3newtable-github-gitlab"
+  name           = "test3newtable-github"
   billing_mode   = "PROVISIONED"
   read_capacity  = 2
   write_capacity = 5
@@ -61,10 +61,10 @@ resource "aws_dynamodb_table" "test_2_table-gitlab" {
 }
 
 
-module "iam_role_inline_policy-gitlab" {
+module "iam_role_inline_policy-github" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "test-role-github-gitlab"
+  name = "test-role-github"
 
   create_instance_profile = true
 

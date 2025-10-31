@@ -15,7 +15,7 @@ variables:
   TF_VAR_cloudwatch_observability_addon_version: v3.6.0-eksbuild.2
   AWS_ROLE_ARN: arn:aws:iam::544546520146:role/gitlab-oidc-role
   AWS_DEFAULT_REGION: $AWS_REGION
-
+  
   # Enable timestamps in job logs (ISO 8601 format)
   FF_TIMESTAMPS: "true"
 

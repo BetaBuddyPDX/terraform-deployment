@@ -8,10 +8,10 @@ on:
 
 env:
   AWS_REGION: us-west-2
-  TFSTATE_KEY: betapdx/terraform-deployment
+  TFSTATE_KEY: betapdx/terraform-deployment-github
   TFSTATE_BUCKET: betapdx-terraform-state
   TFSTATE_REGION: us-west-2
-  TF_VAR_cluster_name: petclinic-demo-gitlab
+  TF_VAR_cluster_name: petclinic-demo-github
   TF_VAR_cloudwatch_observability_addon_version: v3.6.0-eksbuild.2
 
 # Prevent concurrent deployments

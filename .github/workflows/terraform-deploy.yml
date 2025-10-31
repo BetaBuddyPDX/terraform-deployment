@@ -56,6 +56,16 @@ jobs:
             -backend-config="key=${{ env.TFSTATE_KEY }}" \
             -backend-config="region=${{ env.TFSTATE_REGION }}"
       
+      - name: Import Existing Resources (One-time)
+        working-directory: terraform/eks
+        continue-on-error: true
+        run: |
+          echo "Importing existing -github resources into new state file..."
+          terraform import 'aws_dynamodb_table.test_2_table-github' 'test3newtable-github' 2>/dev/null || echo "Skip DynamoDB import"
+          terraform import 'aws_kinesis_stream.apm_test_stream-github' 'apm_test2-github' 2>/dev/null || echo "Skip Kinesis import"
+          terraform import 'aws_sqs_queue.apm_test_queue_-github' 'https://sqs.us-west-2.amazonaws.com/544546520146/apm_test2_-github' 2>/dev/null || echo "Skip SQS import"
+          echo "Import step completed"
+      
       - name: Generate deployment timestamp
         id: timestamp
         run: echo "DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT

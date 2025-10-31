@@ -38,7 +38,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::544546520146:role/github-oidc-role
           aws-region: ${{ env.AWS_REGION }}
-          role-session-name: github-${{ github.repository }}-${{ github.run_id }}
+          role-session-name: github-${{ github.event.repository.name }}-${{ github.run_id }}
       
       - name: Verify AWS credentials
         run: aws sts get-caller-identity

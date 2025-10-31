@@ -64,7 +64,7 @@ resource "aws_dynamodb_table" "test_2_table-github" {
 module "iam_role_inline_policy-github" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "test-role-github"
+  name = "test-role-module-inline-policy-github"
 
   create_instance_profile = true
 

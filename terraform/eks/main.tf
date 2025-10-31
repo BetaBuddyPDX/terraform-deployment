@@ -14,7 +14,7 @@ variable "deployment_timestamp" {
   default     = "2024-01-01T00:00:00Z"
 }
 
-resource "aws_kinesis_stream" "apm_test_stream" {
+resource "aws_kinesis_stream" "apm_test_stream-gitlab" {
   #checkov:skip=CKV_AWS_43:demo only, not encryption is needed
   #checkov:skip=CKV_AWS_185:demo only, not encryption is needed
   name             = "apm_test2-gitlab"
@@ -23,7 +23,7 @@ resource "aws_kinesis_stream" "apm_test_stream" {
   tags = local.common_tags
 }
 
-resource "aws_sqs_queue" "apm_test_queue_" {
+resource "aws_sqs_queue" "apm_test_queue_-gitlab" {
   #checkov:skip=CKV_AWS_27:demo only, not encryption is needed
   name                      = "apm_test2_-gitlab"
   delay_seconds             = 100
@@ -34,7 +34,7 @@ resource "aws_sqs_queue" "apm_test_queue_" {
   tags = local.common_tags
 }
 
-resource "aws_dynamodb_table" "test_2_table" {
+resource "aws_dynamodb_table" "test_2_table-gitlab" {
   #checkov:skip=CKV2_AWS_16:demo only, autoscaling is not needed
   #checkov:skip=CKV_AWS_119:demo only, no encryption is needed
 
@@ -61,7 +61,7 @@ resource "aws_dynamodb_table" "test_2_table" {
 }
 
 
-module "iam_role_inline_policy" {
+module "iam_role_inline_policy-gitlab" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
   name = "test-role-module-inline-policy-gitlab"

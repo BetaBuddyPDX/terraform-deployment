@@ -1,5 +1,17 @@
 # GitLab CI/CD Migration Guide - pet-clinic-infra
 
+> **⚠️ NOTE: This project has been migrated back to GitHub Actions**
+> 
+> This document is kept for historical reference only. The project now uses:
+> - **CI/CD Platform**: GitHub Actions
+> - **Workflow File**: `.github/workflows/terraform-deploy.yml`
+> - **Resource Naming**: All Terraform resource identifiers have `-gitlab` suffix
+> - **Active Documentation**: See `README.md` for current setup
+>
+> The information below describes the original GitLab migration and is preserved for reference.
+
+---
+
 ## Migration Summary
 
 **Original Workflow**: `.github/workflows/terraform-deploy.yml`  

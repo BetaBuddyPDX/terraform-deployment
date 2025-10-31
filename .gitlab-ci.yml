@@ -1,5 +1,10 @@
+# ⚠️ LEGACY FILE - KEPT FOR REFERENCE ONLY ⚠️
+# This project now uses GitHub Actions for CI/CD
+# See: .github/workflows/terraform-deploy.yml
+# 
 # GitLab CI/CD Pipeline for Terraform EKS Deployment
-# Migrated from GitHub Actions to GitLab CI/CD
+# Originally migrated from GitHub Actions to GitLab CI/CD
+# Now migrated back to GitHub Actions with resource names having -gitlab suffix
 
 variables:
   AWS_REGION: us-west-2

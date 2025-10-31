@@ -1,0 +1,67 @@
+name: Terraform EKS Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  AWS_REGION: us-west-2
+  TFSTATE_KEY: betapdx/terraform-deployment
+  TFSTATE_BUCKET: betapdx-terraform-state
+  TFSTATE_REGION: us-west-2
+  TF_VAR_cluster_name: petclinic-demo-gitlab
+  TF_VAR_cloudwatch_observability_addon_version: v3.6.0-eksbuild.2
+
+# Prevent concurrent deployments
+concurrency:
+  group: terraform-deployment
+  cancel-in-progress: false
+
+jobs:
+  terraform-deploy:
+    name: Deploy Terraform Infrastructure
+    runs-on: ubuntu-latest
+    
+    # Required for OIDC authentication
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::544546520146:role/github-oidc-role
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-${{ github.repository }}-${{ github.run_id }}
+      
+      - name: Verify AWS credentials
+        run: aws sts get-caller-identity
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+      
+      - name: Terraform Init
+        working-directory: terraform/eks
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TFSTATE_BUCKET }}" \
+            -backend-config="key=${{ env.TFSTATE_KEY }}" \
+            -backend-config="region=${{ env.TFSTATE_REGION }}"
+      
+      - name: Generate deployment timestamp
+        id: timestamp
+        run: echo "DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+      
+      - name: Terraform Apply
+        working-directory: terraform/eks
+        run: |
+          echo "📅 Deployment Timestamp: ${{ steps.timestamp.outputs.DEPLOYMENT_TIMESTAMP }}"
+          terraform apply --auto-approve -var="deployment_timestamp=${{ steps.timestamp.outputs.DEPLOYMENT_TIMESTAMP }}"

@@ -36,7 +36,7 @@ resource "aws_sqs_queue" "apm_test_queue_-github" {
 
 resource "aws_dynamodb_table" "test_2_table-github" {
   #checkov:skip=CKV2_AWS_16:demo only, autoscaling is not needed
-  #checkov:skip=CKV_AWS_119:demo only, no encryption is needed
+  #checkov:skip=CKV_AWS_119:demo only, no encryption is needed 
 
   name           = "test3newtable-github"
   billing_mode   = "PROVISIONED"

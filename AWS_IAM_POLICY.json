@@ -25,6 +25,8 @@
         "kinesis:DescribeStreamSummary",
         "kinesis:ListStreams",
         "kinesis:UpdateShardCount",
+        "kinesis:IncreaseStreamRetentionPeriod",
+        "kinesis:DecreaseStreamRetentionPeriod",
         "kinesis:AddTagsToStream",
         "kinesis:ListTagsForStream",
         "kinesis:RemoveTagsFromStream"

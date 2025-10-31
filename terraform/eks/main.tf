@@ -64,7 +64,7 @@ resource "aws_dynamodb_table" "test_2_table-gitlab" {
 module "iam_role_inline_policy-gitlab" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  name = "test-role-module-inline-policy-github-gitlab"
+  name = "test-role-github-gitlab"
 
   create_instance_profile = true
 
